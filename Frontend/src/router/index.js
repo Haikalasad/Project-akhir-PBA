@@ -7,7 +7,7 @@ import HeadphonePage from '@/views/Product_Headphone.vue';
 import JoystickPage from '@/views/Product_Joystick.vue';
 import home from '@/views/Home.vue'
 import search from '@/views/Search.vue'
-
+import AboutPage from '@/views/About.vue';
 import cart from '@/views/Cart.vue';
 
 const routes = [
@@ -65,6 +65,11 @@ const routes = [
         name: 'Search',
         component: search, // Use the imported About component
       },
+      {
+        path: '/about', // Define the route path for the About page
+        name: 'About',
+        component: AboutPage, // Use the imported About component
+      }
     ],
   },
 ];
