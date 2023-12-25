@@ -7,8 +7,9 @@ import HeadphonePage from '@/views/Product_Headphone.vue';
 import JoystickPage from '@/views/Product_Joystick.vue';
 import home from '@/views/Home.vue'
 import search from '@/views/Search.vue'
-
+import myorder from '@/views/Myorder.vue'
 import cart from '@/views/Cart.vue';
+import ProductDetails from '@/components/ProductDetails.vue';
 
 const routes = [
   {
@@ -41,6 +42,11 @@ const routes = [
         component: ProductPage, // Use the imported About component
       },
       {
+        path: 'order', // Define the route path for the About page
+        name: 'order',
+        component: myorder, // Use the imported About component
+      },
+      {
         path: 'produk/mouse', // Define the route path for the About page
         name: 'Mouse',
         component: MousePage, // Use the imported About component
@@ -65,7 +71,13 @@ const routes = [
         name: 'Search',
         component: search, // Use the imported About component
       },
+      {
+        path: '/product-details',
+        name: 'product-details',
+        component: ProductDetails,
+      },
     ],
+    
   },
 ];
 
