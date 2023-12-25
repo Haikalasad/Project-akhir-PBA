@@ -39,7 +39,7 @@ export default {
       products: [],
       selectedProduct: null,
       dialogConfirmation: false,
-      quantityToAdd: 1, // Default quantity
+      quantityToAdd: 1,
     };
   },
   created() {
@@ -74,14 +74,12 @@ confirmAddToCart() {
   // Periksa apakah user sudah login
   if (!userID) {
     console.error('User is not logged in');
-    // Mungkin tampilkan pesan atau arahkan pengguna untuk login
     return;
   }
 
-  // Pastikan idProduk dan Jumlah memiliki nilai sebelum mengirimkan permintaan
+ 
   if (!idProduk || !Jumlah) {
     console.error('Invalid product data');
-    // Mungkin tampilkan pesan atau lakukan sesuatu yang sesuai dengan logika aplikasi Anda
     return;
   }
 
@@ -99,20 +97,15 @@ confirmAddToCart() {
     .catch((error) => {
       console.error('Error adding product to cart:', error);
 
-      // Handle error di sini
-      // Misalnya, tampilkan pesan kesalahan ke pengguna atau tangani kesalahan lainnya
       const errorMessage = error.response?.data?.message || 'Error adding product to cart';
       console.log('Server error details:', error.response?.data);
       console.error(errorMessage);
     });
 },
     cancelAddToCart() {
-      // Clear the selected product and close the dialog
-      // this.selectedProduct = null;
       this.dialogConfirmation = false;
     },
     seeMore() {
-      // Implement your logic for "See More" button
     },
   },
 };

@@ -9,7 +9,7 @@ import home from '@/views/Home.vue'
 import search from '@/views/Search.vue'
 import AboutPage from '@/views/About.vue';
 import cart from '@/views/Cart.vue';
-import ProductDetails from '@/components/ProductDetails.vue';
+import myorder from '@/views/Myorder.vue'
 
 const routes = [
   {
@@ -42,11 +42,6 @@ const routes = [
         component: ProductPage, // Use the imported About component
       },
       {
-        path: 'order', // Define the route path for the About page
-        name: 'order',
-        component: myorder, // Use the imported About component
-      },
-      {
         path: 'produk/mouse', // Define the route path for the About page
         name: 'Mouse',
         component: MousePage, // Use the imported About component
@@ -72,12 +67,16 @@ const routes = [
         component: search, // Use the imported About component
       },
       {
+        path: '/order', // Define the route path for the About page
+        name: 'myorder',
+        component: myorder, // Use the imported About component
+      },
+      {
         path: '/about', // Define the route path for the About page
         name: 'About',
         component: AboutPage, // Use the imported About component
       }
     ],
-    
   },
 ];
 

@@ -10,6 +10,7 @@
       </v-container>
       <v-container>
         <produk/>
+        <OurPartners/>
       </v-container>
       <footerSection/>
     </v-main>
@@ -24,5 +25,6 @@ import herosection from "@/components/Hero-section.vue"
 import footerSection from "@/components/footer.vue"
 import TopSell from "@/components/TopSell.vue"
 import produk from "@/components/OurProducts.vue"
+import OurPartners from "@/components/OurPartners.vue"
 
 </script>

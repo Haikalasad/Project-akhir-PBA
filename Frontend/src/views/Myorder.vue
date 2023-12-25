@@ -3,8 +3,11 @@
       <navbar/>
       <v-main>
       <v-container>
-
+        <listOrder/>
       </v-container>
+  
+       <footerSection/>
+    
       </v-main>
   
   
@@ -13,5 +16,6 @@
   
   <script setup>
   import navbar from "@/components/navbar.vue"
-
+  import listOrder from "@/components/listOrder.vue";
+  import footerSection from "@/components/footer.vue";
   </script>
