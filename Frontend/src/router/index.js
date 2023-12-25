@@ -9,6 +9,7 @@ import home from '@/views/Home.vue'
 import search from '@/views/Search.vue'
 import AboutPage from '@/views/About.vue';
 import cart from '@/views/Cart.vue';
+import AdminPanel from '@/views/AdminPanel.vue';
 
 const routes = [
   {
@@ -69,6 +70,11 @@ const routes = [
         path: '/about', // Define the route path for the About page
         name: 'About',
         component: AboutPage, // Use the imported About component
+      },
+      {
+        path: '/AdminPanel',
+        name: 'AdminPanel',
+        component: AdminPanel,
       }
     ],
   },
