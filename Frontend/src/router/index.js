@@ -9,7 +9,9 @@ import home from '@/views/Home.vue'
 import search from '@/views/Search.vue'
 import AboutPage from '@/views/About.vue';
 import cart from '@/views/Cart.vue';
+import myorder from '@/views/Myorder.vue'
 import AdminPanel from '@/views/AdminPanel.vue';
+
 
 const routes = [
   {
@@ -65,6 +67,11 @@ const routes = [
         path: '/search', // Define the route path for the About page
         name: 'Search',
         component: search, // Use the imported About component
+      },
+      {
+        path: '/order', // Define the route path for the About page
+        name: 'myorder',
+        component: myorder, // Use the imported About component
       },
       {
         path: '/about', // Define the route path for the About page

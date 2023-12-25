@@ -9,7 +9,7 @@
     </div>
 
     <div class="image">
-      <img src="../assets/hero-section.jpg"> <!-- Ganti URL_GAMBAR_ANDA dengan URL gambar yang sesuai -->
+      <img src="../assets/hero-section.jpg"> 
     </div>
   </div>
 </template>
@@ -17,8 +17,8 @@
 <style>
 .hero-section {
   display: flex;
-  justify-content: center; /* Menggeser ke tengah secara horizontal */
-  align-items: center; /* Menggeser ke tengah secara vertikal */
+  justify-content: center; 
+  align-items: center; 
   width: 100%;
 height: 453px;
   
@@ -35,7 +35,6 @@ height: 453px;
   margin-right: 10px;
   padding: 30px;
   text-align: left;
-  /* Mengatur teks di tengah secara horizontal */
 }
 .btn-explore {
   background: #000;

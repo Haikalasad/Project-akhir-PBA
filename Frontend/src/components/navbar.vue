@@ -9,7 +9,9 @@
     <div class="title d-flex justify-center">
       <router-link to="/home" class="title" active-class="active-link">Home</router-link>
       <router-link to="/cart" class="title" active-class="active-link">Cart</router-link>
+      <router-link to="/order" class="title" active-class="active-link">MyOrder</router-link>
       <router-link to="/about" class="title" active-class="active-link">About</router-link>
+      
     </div>
 
     <v-spacer></v-spacer>
