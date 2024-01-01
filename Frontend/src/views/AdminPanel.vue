@@ -46,6 +46,7 @@
               @change="handlePhotoUpload"
               required
             ></v-file-input>
+            <v-text-field v-model="productKategori" label="Kategori" type="number" required></v-text-field>
             <v-text-field v-model="productPrice" label="Harga" type="number" required prefix="Rp."></v-text-field>
             <v-text-field v-model="productStock" label="Stok" type="number" required></v-text-field>
           </v-form>
@@ -160,6 +161,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   data() {
     return {
@@ -178,18 +180,21 @@ export default {
       editedProductName: '',
       editedProductPrice: null,
       editedProductStock: null,
-      products: [
-        {
-          namaProduk: 'Dummy Product 1',
-          foto: 'https://i.ytimg.com/vi/p1bDXVKtAGc/maxresdefault.jpg',
-          harga: 100000,
-          stok: 50,
-          terjual: 20,
-        },
-      ],
+      products: [],
     };
   },
+  created() {
+    this.fetchProducts();
+  },
   methods: {
+    async fetchProducts() {
+      try {
+        const response = await axios.get('http://localhost:3001/api/game/all');
+        this.products = response.data.data;
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    },
     openAddProductDialog() {
       this.addProductDialog = true;
     },
@@ -207,31 +212,62 @@ export default {
     handlePhotoUpload(file) {
       this.selectedFile = file;
     },
-    addProduct() {
-      if (!this.productName || !this.selectedFile || this.productPrice === null || this.productStock === null) {
-        console.error('Please fill in all required fields.');
-        return;
+async addProduct() {
+  if (!this.productName || !this.selectedFile || this.productPrice === null || this.productStock === null || this.productKategori === null) {
+    console.error('Please fill in all required fields.');
+    return;
+  }
+
+  if (this.productPrice < 0 || isNaN(this.productPrice) || this.productStock < 0 || isNaN(this.productStock)) {
+    console.error('Invalid input. Please enter non-negative numbers for Harga and Stok.');
+    return;
+  }
+  if (this.productKategori <= 0 && this.productKategori >=4){
+    console.error('Invalid input. Please enter idKategori 1-4');
+    return;
+  }
+
+  const photoName = this.selectedFile ? (this.selectedFile.name || 'No Name') : 'No Photo';
+
+  try {
+    const response = await axios.post('http://localhost:3001/api/game/admin/add', {
+      namaProduk: this.productName,
+      foto: photoName,
+      idKategori: this.productKategori,
+      harga: this.productPrice,
+      stok: this.productStock,
+    });
+
+    // Handle the response from the server if needed
+    console.log('Product added successfully:', response.data);
+
+    // Optionally, you can update your local data or perform other actions based on the response
+
+  } catch (error) {
+    // Handle the error from the server
+    console.error('Error adding product:', error.message);
+  }
+
+  this.addProductDialog = false;
+  this.$refs.addProductForm.reset();
+},
+
+    async deleteProduct() {
+      const productId = this.selectedProductDetail.id;
+      try {
+        
+        const response = await axios.post(`http://localhost:3001/api/game/admin/delete/${productId}`);
+
+        // Handle the response from the server if needed
+        console.log('Product deleted successfully:', response.data);
+
+        // Optionally, you can update your local data or perform other actions based on the response
+
+      } catch (error) {
+        // Handle the error from the server
+        console.error('Error deleting product:', error.message);
       }
 
-      if (this.productPrice < 0 || isNaN(this.productPrice) || this.productStock < 0 || isNaN(this.productStock)) {
-        console.error('Invalid input. Please enter non-negative numbers for Harga and Stok.');
-        return;
-      }
-
-      const photoName = this.selectedFile ? (this.selectedFile.name || 'No Name') : 'No Photo';
-
-      console.log('Product Added:', {
-        name: this.productName,
-        photo: photoName,
-        price: this.productPrice,
-        stock: this.productStock,
-      });
-
-      this.addProductDialog = false;
-      this.$refs.addProductForm.reset();
-    },
-    deleteProduct() {
-      console.log('Product Deleted:', this.selectedProductDetail);
       this.productDetailDialog = false;
       this.confirmDeleteDialog = false;
     },
@@ -248,16 +284,30 @@ export default {
       this.editProductDialog = false;
       this.$refs.editProductForm.reset();
     },
-    saveEditedProduct() {
-      console.log('Product Edited:', {
-        id: this.selectedProductDetail.id,
-        name: this.editedProductName,
-        // Add other edited properties as needed
-      });
+    async saveEditedProduct() {
+      const productId = this.selectedProductDetail.id;
 
-      this.editProductDialog = false;
-      this.$refs.editProductForm.reset();
-    },
+      try {
+        const response = await axios.post(`http://localhost:3001/api/game/admin/edit/${productId}`, {
+          namaProduk: this.editedProductName,
+          harga: this.editedProductPrice,
+          stok: this.editedProductStock,
+          // Add other edited properties as needed
+        });
+
+        // Handle the response from the server if needed
+        console.log('Product edited successfully:', response.data);
+
+        // Optionally, you can update your local data or perform other actions based on the response
+
+      } catch (error) {
+        // Handle the error from the server
+        console.error('Error editing product:', error.message);
+      }
+
+  this.editProductDialog = false;
+  this.$refs.editProductForm.reset();
+},
     addToCart(product) {
       console.log('Added to Cart:', product);
     },
