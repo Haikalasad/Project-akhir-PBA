@@ -312,5 +312,33 @@ router.post('/order', [
         });
     });
 });
+
+router.get('/pesanan', function (req, res) {
+    // Ganti dengan logika untuk mendapatkan pesanan berdasarkan pemilik (owner)
+    const pesananQuery = `
+       SELECT pesanan.*, produk.namaProduk, produk.harga, produk.stok, produk.foto, produk.terjual,status_pesanan.status
+        FROM pesanan
+        JOIN keranjang ON pesanan.idCart = keranjang.id
+        JOIN produk ON keranjang.idProduk = produk.id
+        JOIN status_pesanan ON pesanan.status_pesanan = status_pesanan.id
+        ORDER BY pesanan.id DESC;
+    `;
+
+    connection.query(pesananQuery, function (err, rows) {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({
+                status: false,
+                message: 'Error retrieving data from the database',
+            });
+        }
+
+        return res.status(200).json({
+            status: true,
+            message: 'List of orders retrieved successfully',
+            data: rows,
+        });
+    });
+});
   
 module.exports = router;

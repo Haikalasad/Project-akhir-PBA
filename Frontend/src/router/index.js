@@ -11,6 +11,7 @@ import AboutPage from '@/views/About.vue';
 import cart from '@/views/Cart.vue';
 import myorder from '@/views/Myorder.vue'
 import AdminPanel from '@/views/AdminPanel.vue';
+import PesananOwner from '@/views/PesananOwner.vue';
 
 
 const routes = [
@@ -27,6 +28,11 @@ const routes = [
         path: 'signup',
         name: 'SignUp',
         component: () => import('@/views/SignUp.vue'),
+      },
+      {
+        path: '/pesanan/owner',
+        name: 'PesananOwner',
+        component: PesananOwner,
       },
       {
         path: '/home', // Define the route path for the About page
