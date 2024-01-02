@@ -313,6 +313,7 @@ router.post('/order', [
     });
 });
 
+
 router.get('/pesanan', function (req, res) {
     // Ganti dengan logika untuk mendapatkan pesanan berdasarkan pemilik (owner)
     const pesananQuery = `
@@ -325,11 +326,35 @@ router.get('/pesanan', function (req, res) {
     `;
 
     connection.query(pesananQuery, function (err, rows) {
+=======
+router.post('/admin/add', [
+    body('namaProduk').notEmpty(),
+    body('foto').notEmpty(),
+    body('harga').notEmpty(),
+    body('stok').notEmpty(),
+  ], async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        status: false,
+        message: 'Invalid input data',
+        errors: errors.array(),
+      });
+    }
+
+    const { namaProduk, foto, harga, stok, idKategori} = req.body;
+
+    const insertAdminQuery = `INSERT INTO produk (namaProduk, foto, idKategori, harga, stok) VALUES (?, ?, ?, ?, ?);`;
+    connection.query(insertAdminQuery, [namaProduk, foto, idKategori, harga, stok], function (err, result) {
         if (err) {
             console.error(err);
             return res.status(500).json({
                 status: false,
+
                 message: 'Error retrieving data from the database',
+                message: 'Error inserting data into the database',
+                error: err.message,
+
             });
         }
 
@@ -340,5 +365,60 @@ router.get('/pesanan', function (req, res) {
         });
     });
 });
+
+            message: 'Data inserted successfully',
+            insertedId: result.insertId, // Optionally, you can send the inserted ID back to the client
+        });
+    });
+});
+
+router.post('/admin/edit/:productId', [
+    body('stok').notEmpty(),
+  ], async function (req, res) {
+    const { productId } = req.params;
+    const { namaProduk, harga, stok } = req.body;
+  
+    const updateProductQuery = 'UPDATE produk SET namaProduk = ?, harga = ?, stok = ? WHERE id = ?;';
+  
+    connection.query(updateProductQuery, [namaProduk, harga, stok, productId], function (err, result) {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({
+          status: false,
+          message: 'Error updating product in the database',
+        });
+      }
+  
+      return res.status(200).json({
+        status: true,
+        message: 'Product updated successfully',
+      });
+    });
+  });
+  
+  router.post('/admin/delete/:productId', [
+    // You can add validation if needed
+  ], async function (req, res) {
+    const { productId } = req.params;
+  
+    const deleteProductQuery = 'DELETE FROM produk WHERE id = ?';
+  
+    connection.query(deleteProductQuery, [productId], function (err, result) {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({
+          status: false,
+          message: 'Error deleting product from the database',
+        });
+      }
+  
+      return res.status(200).json({
+        status: true,
+        message: 'Product deleted successfully',
+        data: result,
+      });
+    });
+  });
+
   
 module.exports = router;
