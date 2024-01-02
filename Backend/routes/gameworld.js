@@ -326,7 +326,23 @@ router.get('/pesanan', function (req, res) {
     `;
 
     connection.query(pesananQuery, function (err, rows) {
-=======
+        if (err) {
+            console.error(err);
+            return res.status(500).json({
+                status: false,
+                message: 'Error retrieving data from the database',
+            });
+        }
+
+        return res.status(200).json({
+            status: true,
+            message: 'List of orders retrieved successfully',
+            data: rows,
+        });
+    });
+});
+
+
 router.post('/admin/add', [
     body('namaProduk').notEmpty(),
     body('foto').notEmpty(),
@@ -362,12 +378,6 @@ router.post('/admin/add', [
             status: true,
             message: 'List of orders retrieved successfully',
             data: rows,
-        });
-    });
-});
-
-            message: 'Data inserted successfully',
-            insertedId: result.insertId, // Optionally, you can send the inserted ID back to the client
         });
     });
 });

@@ -1,14 +1,15 @@
 <template>
   <v-app>
-    <v-app-bar app color="white">
-      <v-app-bar-title style="font-weight: bold;">
-        Management Produk
-      </v-app-bar-title>
+    <navbarAdmin/>
+    <v-container>
+      <v-card-text style="font-weight: bold;">
+          <h2>Management product</h2>
+          <v-btn style="background-color: black; color: white;" @click="openAddProductDialog">
+            Tambah Produk
+          </v-btn>
+      </v-card-text>
       <v-spacer></v-spacer>
-      <v-btn style="background-color: black; color: white;" @click="openAddProductDialog">
-        Tambah Produk
-      </v-btn>
-    </v-app-bar>
+    </v-container>
 
     <v-container style="margin-top: 65px;">
       <v-row>
@@ -162,6 +163,7 @@
 
 <script>
 import axios from 'axios';
+import navbarAdmin from '@/components/navbarAdmin.vue';
 export default {
   data() {
     return {

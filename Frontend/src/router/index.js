@@ -30,7 +30,7 @@ const routes = [
         component: () => import('@/views/SignUp.vue'),
       },
       {
-        path: '/pesanan/owner',
+        path: '/admin/pesanan',
         name: 'PesananOwner',
         component: PesananOwner,
       },
@@ -85,7 +85,7 @@ const routes = [
         component: AboutPage, // Use the imported About component
       },
       {
-        path: '/AdminPanel',
+        path: '/admin/produk',
         name: 'AdminPanel',
         component: AdminPanel,
       }
