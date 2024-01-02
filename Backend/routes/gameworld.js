@@ -313,6 +313,20 @@ router.post('/order', [
     });
 });
 
+
+router.get('/pesanan', function (req, res) {
+    // Ganti dengan logika untuk mendapatkan pesanan berdasarkan pemilik (owner)
+    const pesananQuery = `
+       SELECT pesanan.*, produk.namaProduk, produk.harga, produk.stok, produk.foto, produk.terjual,status_pesanan.status
+        FROM pesanan
+        JOIN keranjang ON pesanan.idCart = keranjang.id
+        JOIN produk ON keranjang.idProduk = produk.id
+        JOIN status_pesanan ON pesanan.status_pesanan = status_pesanan.id
+        ORDER BY pesanan.id DESC;
+    `;
+
+    connection.query(pesananQuery, function (err, rows) {
+=======
 router.post('/admin/add', [
     body('namaProduk').notEmpty(),
     body('foto').notEmpty(),
@@ -336,13 +350,22 @@ router.post('/admin/add', [
             console.error(err);
             return res.status(500).json({
                 status: false,
+
+                message: 'Error retrieving data from the database',
                 message: 'Error inserting data into the database',
                 error: err.message,
+
             });
         }
 
         return res.status(200).json({
             status: true,
+            message: 'List of orders retrieved successfully',
+            data: rows,
+        });
+    });
+});
+
             message: 'Data inserted successfully',
             insertedId: result.insertId, // Optionally, you can send the inserted ID back to the client
         });
@@ -396,5 +419,6 @@ router.post('/admin/edit/:productId', [
       });
     });
   });
+
   
 module.exports = router;
