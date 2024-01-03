@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <navbar/>
-    <v-container>
+    <v-container style="margin-top: 65px;">
   
         <h2 class="mb-4">Shopping Cart</h2>
       <v-row>
@@ -97,10 +97,11 @@
     </v-container>
   </v-app>
 </template>
-
+<script setup>
+import navbar from '@/components/navbar.vue';
+</script>
 <script>
 import axios from 'axios';
-import navbar from '@/components/navbar.vue';
 
 export default {
   data() {
