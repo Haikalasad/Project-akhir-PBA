@@ -1,87 +1,99 @@
 <template>
-    <v-container>
-        <h2 class="mb-4">List Order</h2>
-        <v-row v-if="orders.length === 0">
-            <v-col>
-                <v-alert type="info">Tidak ada pesanan.</v-alert>
-            </v-col>
-        </v-row>
-        <div v-if="orders.length > 0" class="order-list">
-            <div v-for="order in orders" :key="order.id" class="order-item">
-                <div class="product-image">
-                    <img :src="order.foto" alt="Product Image" />
+    <v-app>
+        <navbarAdmin />
+        <v-main>
+            <v-container>
+                <h2 class="mb-4">List Order</h2>
+                <v-row v-if="orders.length === 0">
+                    <v-col>
+                        <v-alert type="info">Tidak ada pesanan.</v-alert>
+                    </v-col>
+                </v-row>
+                <div v-if="orders.length > 0" class="order-list">
+                    <div v-for="order in orders" :key="order.id" class="order-item">
+                        <div class="product-image">
+                            <img :src="order.foto" alt="Product Image" />
+                        </div>
+                        <div class="order-item-content">
+                            <div class="headline">{{ order.namaProduk }}</div>
+                            <div>Harga: Rp {{ order.harga }}</div>
+                            <div>Tanggal pemesanan: {{ formatDate(order.tanggalPesan) }}</div>
+                            <div>Status: {{ order.status }}</div>
+                            <v-btn
+                                v-if="order.status !== 'Sudah bayar'"
+                                @click="confirmPayment(order.id)"
+                            >
+                                Konfirmasi Pembayaran
+                            </v-btn>
+                            <v-btn
+                                v-else
+                                disabled
+                            >
+                                Pembayaran sudah dikonfirmasi
+                            </v-btn>
+                        </div>
+                    </div>
                 </div>
-                <div class="order-item-content">
-                    <div class="headline">{{ order.namaProduk }}</div>
-                    <div>Harga: Rp {{ order.harga }}</div>
-                    <div>Tanggal pemesanan: {{ formatDate(order.tanggalPesan) }}</div>
-                    <div>Status: {{ order.status }}</div>
-                    <v-btn v-if="order.status !== 'sudah bayar'" @click="confirmPayment(order.id)">
-                        Konfirmasi Pembayaran
-                    </v-btn>
-                </div>
-            </div>
-        </div>
-    </v-container>
+            </v-container>
+        </v-main>
+    </v-app>
 </template>
 
-<script>
+<!-- ... (rest of the script and style sections) ... -->
+
+
+<script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import navbarAdmin from '@/components/navbarAdmin.vue';
 
-export default {
-    setup() {
-        const orders = ref([]);
+const orders = ref([]);
+const orderStatus = ref('');
 
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(`http://localhost:3001/api/game/pesanan`);
-                orders.value = response.data.data;
-            } catch (error) {
-                console.error('Error fetching orders:', error);
-            }
-        };
-
-        const confirmPayment = async (orderId) => {
-            try {
-                // Ganti URL dengan endpoint yang sesuai untuk mengonfirmasi pembayaran
-                const response = await axios.post(`http://localhost:3001/api/game/konfirmasi-pembayaran/${orderId}`);
-
-                // Periksa jika konfirmasi berhasil (response.data.success disesuaikan dengan respon dari server)
-                if (response.data.success) {
-                    console.log('Konfirmasi Pembayaran berhasil:', response.data);
-
-                    // Ubah status pesanan di local data
-                    const updatedOrders = orders.value.map(order => {
-                        if (order.id === orderId) {
-                            return { ...order, status_pesanan: 2 }; // Ubah status_pesanan dari 1 ke 2
-                        }
-                        return order;
-                    });
-
-                    orders.value = updatedOrders; // Update local data
-                } else {
-                    console.error('Konfirmasi Pembayaran gagal:', response.data.message);
-                }
-            } catch (error) {
-                console.error('Error confirming payment:', error);
-            }
-        };
-
-        onMounted(fetchData);
-
-        return {
-            orders,
-            formatDate: (dateString) => {
-                const options = { year: 'numeric', month: 'long', day: 'numeric' };
-                return new Date(dateString).toLocaleDateString('id-ID', options);
-            },
-            confirmPayment,
-        };
-    },
+const fetchData = async () => {
+    try {
+        const response = await axios.get(`http://localhost:3001/api/game/pesanan`);
+        orders.value = response.data.data;
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+    }
 };
-</script>
 
+
+const confirmPayment = async (orderId) => {
+    try {
+        const response = await axios.post(`http://localhost:3001/api/game/konfirmasi-pembayaran/${orderId}`);
+
+        if (response.data.status) {
+            console.log('Konfirmasi Pembayaran berhasil:', response.data);
+
+            // Set the order status to 'sudah bayar'
+            orderStatus.value = 'sudah bayar';
+
+            // Optionally, you can update the orders array if needed
+            const updatedOrders = orders.value.map((order) => {
+                if (order.id === orderId) {
+                    return { ...order, status_pesanan: 2 };
+                }
+                return order;
+            });
+
+            orders.value = updatedOrders;
+        } else {
+            console.error('Konfirmasi Pembayaran gagal:', response.data.message);
+        }
+    } catch (error) {
+        console.error('Error confirming payment:', error);
+    }
+};
+
+const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('id-ID', options);
+};
+
+onMounted(fetchData);
+</script>
 
 <style scoped>
 .order-list {

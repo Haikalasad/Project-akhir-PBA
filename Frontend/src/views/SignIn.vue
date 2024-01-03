@@ -52,10 +52,20 @@ export default {
           password: this.password,
         });
 
+    
         this.$store.commit('setUserID', response.data.user.id);
-        console.log(response.data.user.id) // cek user id
+        console.log(response.data.user.id); // check user id
 
-        router.push('/home');
+        if (this.email.toLowerCase() === 'admin@gmail.com') {
+          console.log('Redirecting to admin page');
+          // Redirect to the admin page
+          router.push('/admin/produk');
+        } else {
+          console.log('Redirecting to home page');
+          // Redirect to the user's home page
+          router.push('/home');
+        }
+
       } catch (error) {
         console.error('Login error:', error.response);
 

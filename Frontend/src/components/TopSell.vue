@@ -8,7 +8,7 @@
         <v-col v-for="(product) in products" :key="product.id" cols="12" sm="6" md="4">
           <v-card class="product-card">
             <v-img class="img" :src="product.foto" aspect-ratio="2/3"></v-img>
-            <v-card-title>{{ product.nama }}</v-card-title>
+            <v-card-title>{{ product.namaProduk }}</v-card-title>
             <v-card-subtitle>Harga: Rp {{ product.harga }}</v-card-subtitle>
             <v-card-text>Stok: {{ product.stok }}</v-card-text>
             <v-card-text>Terjual: {{ product.terjual }}</v-card-text>

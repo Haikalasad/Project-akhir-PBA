@@ -1,54 +1,74 @@
 <template>
-    <div class="container">
-      <div class="glassmorphism-card">
-        <!-- Sign Up Section -->
-        <div class="signup-section">
-          <h2 class="SignUpHeader">Sign Up</h2>
-          <form @submit.prevent="signUp">
-            <!-- Email Input -->
-            <label for="email">Email:</label>
-            <input v-model="emailValue" type="email" placeholder="Enter your email" />
-  
-            <!-- Username Input -->
-            <label for="username">Username:</label>
-            <input v-model="usernameValue" type="text" placeholder="Choose a username" />
-  
-            <!-- Password Input -->
-            <label for="password">Password:</label>
-            <input v-model="passwordValue" type="password" placeholder="Choose a password" />
-  
-            <!-- Sign Up Button -->
-            <button type="submit" class="SignUpButton">Sign Up</button>
-          </form>
-  
-          <!-- Already Have an Account? Sign In Link -->
-          <div class="HaveAnAccountSignInLink">
-            <span>Already have an account? </span>
-            <router-link to="/" class="SignInLink">Sign in</router-link>
-          </div>
+  <div class="container">
+    <div class="glassmorphism-card">
+      <!-- Sign Up Section -->
+      <div class="signup-section">
+        <h2 class="SignUpHeader">Sign Up</h2>
+        <form @submit.prevent="signUp">
+          <!-- Email Input -->
+          <label for="email">Email:</label>
+          <input v-model="emailValue" type="email" placeholder="Enter your email" />
+
+          <!-- Username Input -->
+          <label for="username">Username:</label>
+          <input v-model="usernameValue" type="text" placeholder="Choose a username" />
+
+          <!-- Password Input -->
+          <label for="password">Password:</label>
+          <input v-model="passwordValue" type="password" placeholder="Choose a password" />
+
+          <!-- Sign Up Button -->
+          <button type="submit" class="SignUpButton">Sign Up</button>
+        </form>
+
+        <!-- Already Have an Account? Sign In Link -->
+        <div class="HaveAnAccountSignInLink">
+          <span>Already have an account? </span>
+          <router-link to="/" class="SignInLink">Sign in</router-link>
         </div>
       </div>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'SignUpPage',
-    data() {
-      return {
-        emailValue: '',
-        usernameValue: '',
-        passwordValue: '',
-      };
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+import router from '@/router';
+export default {
+  name: 'SignUpPage',
+  data() {
+    return {
+      emailValue: '',
+      usernameValue: '',
+      passwordValue: '',
+    };
+  },
+  methods: {
+    async signUp() {
+      try {
+        const response = await axios.post('http://localhost:3001/api/game/signup', {
+          email: this.emailValue,
+          username: this.usernameValue,
+          password: this.passwordValue,
+        });
+
+        // Assuming your API response structure contains a 'status' field
+        if (response.data.status) {
+          // Signup successful, you may want to redirect the user or show a success message
+          router.push('/');
+          console.log('Signup successful:', response.data);
+        } else {
+          // Signup failed, handle the error (e.g., display error messages)
+          console.error('Signup failed:', response.data.message);
+        }
+      } catch (error) {
+        console.error('Error during signup:', error);
+        // Handle network errors or other issues during signup
+      }
     },
-    methods: {
-      signUp() {
-       
-      
-      },
-    },
-  };
-  </script>
+  },
+};
+</script>
   
   <style scoped>
   .container {
