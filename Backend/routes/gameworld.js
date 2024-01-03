@@ -57,8 +57,67 @@ router.post('/login', [
     });
 });
 
+router.post('/signup', [
+    body('username').notEmpty(),
+    body('email').notEmpty().isEmail(),
+    body('password').notEmpty(),
+    // Add more validation rules as needed
+], async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            status: false,
+            message: 'Invalid input data',
+            errors: errors.array(),
+        });
+    }
+
+    const { username, email, password } = req.body;
+
+    const userExistsQuery = 'SELECT * FROM users WHERE email = ?';
+    connection.query(userExistsQuery, [email], function (err, rows) {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({
+                status: false,
+                message: 'Internal Server Error',
+            });
+        }
+
+        if (rows.length > 0) {
+            return res.status(409).json({
+                status: false,
+                message: 'Email already registered',
+            });
+        }
+
+        const createUserQuery = 'INSERT INTO users (nama, email, password) VALUES (?, ?, ?)';
+        connection.query(createUserQuery, [username, email, password], function (insertErr, result) {
+            if (insertErr) {
+                console.error(insertErr);
+                return res.status(500).json({
+                    status: false,
+                    message: 'Internal Server Error',
+                });
+            }
+
+            const userId = result.insertId;
+
+            return res.status(201).json({
+                status: true,
+                message: 'Signup successful',
+                user: {
+                    id: userId,
+                    username: username,
+                    email: email,
+                },
+            });
+        });
+    });
+});
+
 router.get('/all', function (req, res) {
-    connection.query('SELECT * FROM produk ORDER BY id', function (err, rows) {
+    connection.query('SELECT * ,produk.id AS id,kategori.jenis AS productKategori FROM produk JOIN kategori ON produk.idKategori = kategori.id ORDER BY produk.id', function (err, rows) {
         if (err) {
             return res.status(500).json({
                 status: false,
@@ -105,6 +164,30 @@ router.get('/', function (req, res) {
                 data: rows,
             });
         }
+    });
+});
+router.get('/categories/:categoryId/products', function (req, res) {
+    const categoryId = req.params.categoryId;
+
+    const productsByCategoryQuery = `
+        SELECT * FROM produk
+        WHERE idKategori = ?;
+    `;
+
+    connection.query(productsByCategoryQuery, [categoryId], function (err, rows) {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({
+                status: false,
+                message: 'Error retrieving data from the database',
+            });
+        }
+
+        return res.status(200).json({
+            status: true,
+            message: 'List of Products by Category',
+            data: rows,
+        });
     });
 });
 
@@ -377,7 +460,6 @@ router.post('/admin/add', [
         return res.status(200).json({
             status: true,
             message: 'List of orders retrieved successfully',
-            data: rows,
         });
     });
 });
@@ -386,11 +468,11 @@ router.post('/admin/edit/:productId', [
     body('stok').notEmpty(),
   ], async function (req, res) {
     const { productId } = req.params;
-    const { namaProduk, harga, stok } = req.body;
+    const { namaProduk, harga, stok,foto } = req.body;
   
-    const updateProductQuery = 'UPDATE produk SET namaProduk = ?, harga = ?, stok = ? WHERE id = ?;';
+    const updateProductQuery = 'UPDATE produk SET namaProduk = ?, harga = ?, stok = ?,foto = ? WHERE id = ?;';
   
-    connection.query(updateProductQuery, [namaProduk, harga, stok, productId], function (err, result) {
+    connection.query(updateProductQuery, [namaProduk, harga, stok,foto, productId], function (err, result) {
       if (err) {
         console.error(err);
         return res.status(500).json({
@@ -429,6 +511,32 @@ router.post('/admin/edit/:productId', [
       });
     });
   });
+
+
+  router.post('/konfirmasi-pembayaran/:orderId', async (req, res) => {
+    const orderId = req.params.orderId;
+
+    // Perform validation if needed
+
+    // Update the status_pesanan to 2 (sudah bayar) for the order with orderId
+    const updateOrderQuery = 'UPDATE pesanan SET status_pesanan = 2 WHERE id = ?';
+
+    connection.query(updateOrderQuery, [orderId], function (err, result) {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({
+                status: false,
+                message: 'Error updating order status in the database',
+            });
+        }
+
+        return res.status(200).json({
+            status: true,
+            message: 'Order payment confirmed successfully',
+        });
+    });
+});
+
 
   
 module.exports = router;

@@ -6,24 +6,21 @@
       <v-app-bar-title>GameWorld</v-app-bar-title>
       <v-spacer></v-spacer>
   
-      <div class="title d-flex justify-center">
-        <router-link to="/admin/produk" class="title" active-class="active-link">Your produk</router-link>
+      
+      <v-spacer></v-spacer>
+      <div class="title d-flex ml-auto">
+        <router-link to="/admin/produk" class="title" active-class="active-link">Your product</router-link>
         <router-link to="/admin/pesanan" class="title" active-class="active-link">Orders</router-link>
         <router-link to="/about" class="title" active-class="active-link">About</router-link>
-        
       </div>
-  
-      <v-spacer></v-spacer>
-
     </v-app-bar>
   </template>
-
   
   <style>
   .title:hover {
     color: gray;
   }
-  .title{
+  .title {
     padding: 20px;
     text-decoration: none;
     color: black;
@@ -31,9 +28,8 @@
   .active-link {
     font-weight: bold;
     text-decoration: none;
-    color: Black; /* Ubah warna sesuai preferensi Anda */
+    color: black; /* Change the color as per your preference */
     padding: auto;
-  
   }
   </style>
   

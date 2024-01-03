@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <navbarAdmin/>
-    <v-container>
+    <v-container style="margin-top: 65px;">
       <v-card-text style="font-weight: bold;">
           <h2>Management product</h2>
           <v-btn style="background-color: black; color: white;" @click="openAddProductDialog">
@@ -13,7 +13,7 @@
 
     <v-container style="margin-top: 65px;">
       <v-row>
-        <v-col v-for="(product, index) in products" :key="index" cols="12" sm="6" md="4">
+        <v-col v-for="(product,index) in products" :key="product.id" cols="12" sm="6" md="4">
           <v-card class="product-card">
             <v-img class="img" :src="product.foto" aspect-ratio="2/3"></v-img>
             <v-card-title>{{ product.namaProduk }}</v-card-title>
@@ -41,12 +41,7 @@
           <!-- Form untuk menambah produk -->
           <v-form ref="addProductForm" v-model="validForm">
             <v-text-field v-model="productName" label="Nama Produk" required></v-text-field>
-            <v-file-input
-              label="Foto Produk"
-              accept="image/*"
-              @change="handlePhotoUpload"
-              required
-            ></v-file-input>
+            <v-text-field v-model="productPhoto" label="foto Produk" required></v-text-field>
             <v-text-field v-model="productKategori" label="Kategori" type="number" required></v-text-field>
             <v-text-field v-model="productPrice" label="Harga" type="number" required prefix="Rp."></v-text-field>
             <v-text-field v-model="productStock" label="Stok" type="number" required></v-text-field>
@@ -114,11 +109,7 @@
           <!-- Form for editing product -->
           <v-form ref="editProductForm" v-model="validEditForm">
             <v-text-field v-model="editedProductName" label="Nama Produk" required></v-text-field>
-            <v-file-input
-              label="Edit Foto Produk"
-              accept="image/*"
-              @change="handlePhotoEdit"
-            ></v-file-input>
+            <v-text-field v-model="editedProductPhoto" label="foto Produk" required></v-text-field>
             <v-text-field v-model="editedProductPrice" label="Edit Harga" type="number" required prefix="Rp."></v-text-field>
             <v-text-field v-model="editedProductStock" label="Edit Stok" type="number" required></v-text-field>
           </v-form>
@@ -160,6 +151,12 @@
 
   </v-app>
 </template>
+<script setup>
+import navbarAdmin from '@/components/navbarAdmin.vue';
+</script>
+
+
+
 
 <script>
 import axios from 'axios';
@@ -180,6 +177,7 @@ export default {
       selectedFile: null,
       selectedProductDetail: null,
       editedProductName: '',
+      editedProductPhoto: '',
       editedProductPrice: null,
       editedProductStock: null,
       products: [],
@@ -205,17 +203,16 @@ export default {
       this.editedProductName = product.namaProduk;
       this.editedProductPrice = product.harga;
       this.editedProductStock = product.stok;
+      this.editedProductPhoto = product.foto;
       this.productDetailDialog = true;
     },
     cancelAddProduct() {
       this.addProductDialog = false;
       this.$refs.addProductForm.reset();
     },
-    handlePhotoUpload(file) {
-      this.selectedFile = file;
-    },
+
 async addProduct() {
-  if (!this.productName || !this.selectedFile || this.productPrice === null || this.productStock === null || this.productKategori === null) {
+  if (!this.productName || !this.productPhoto || this.productPrice === null || this.productStock === null || this.productKategori === null) {
     console.error('Please fill in all required fields.');
     return;
   }
@@ -229,12 +226,12 @@ async addProduct() {
     return;
   }
 
-  const photoName = this.selectedFile ? (this.selectedFile.name || 'No Name') : 'No Photo';
+  
 
   try {
     const response = await axios.post('http://localhost:3001/api/game/admin/add', {
       namaProduk: this.productName,
-      foto: photoName,
+      foto: this.productPhoto,
       idKategori: this.productKategori,
       harga: this.productPrice,
       stok: this.productStock,
@@ -254,11 +251,11 @@ async addProduct() {
   this.$refs.addProductForm.reset();
 },
 
-    async deleteProduct() {
-      const productId = this.selectedProductDetail.id;
+    deleteProduct() {
+      const productId = this.selectedProductDetail.id
       try {
         
-        const response = await axios.post(`http://localhost:3001/api/game/admin/delete/${productId}`);
+        const response = axios.post(`http://localhost:3001/api/game/admin/delete/${productId}`);
 
         // Handle the response from the server if needed
         console.log('Product deleted successfully:', response.data);
@@ -294,6 +291,7 @@ async addProduct() {
           namaProduk: this.editedProductName,
           harga: this.editedProductPrice,
           stok: this.editedProductStock,
+          foto : this.editedProductPhoto
           // Add other edited properties as needed
         });
 
